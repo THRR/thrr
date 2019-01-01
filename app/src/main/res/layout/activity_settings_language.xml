@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".settings_language">
+
+    <RadioGroup
+        android:id="@+id/lang_radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="226dp">
+
+        <RadioButton
+            android:id="@+id/lang_english"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lang_english"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/lang_french"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lang_french" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/lang_SaveChanges"
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="166dp"
+        android:background="@color/tomato"
+        android:text="@string/lang_saveSettings"
+        android:textColor="@android:color/white" />
+
+
+</RelativeLayout>

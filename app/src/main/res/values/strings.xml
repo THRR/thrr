@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">THRR</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="Splashimage">LogoImage</string>
+    <string name="title_activity_login_register">THHR</string>
+    <string name="log_reg_login">sign in</string>
+    <string name="log_reg_register">sign up</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password </string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_invalid_password_alphaNumeric">This password should contain letters and numbers</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+    <!-- Strings related to registration -->
+    <string name="rgst_firstName">First name</string>
+    <string name="rgst_lastName">Last name</string>
+    <string name="rgst_email">Email</string>
+    <string name="rgst_pswrd">Password</string>
+    <string name="rgst_rePswd">Re-enter Password</string>
+    <string name="rgst_signUp">Sign Up</string>
+    <string name="title_activity_home_page">HomePage</string>
+
+    <!-- Stringss related to bottom menu -->
+    <string name="bottom_home">Home</string>
+    <string name="bottom_heart">Heart rate</string>
+    <string name="bottom_temperature">Temperature</string>
+
+    <!-- Stringss related to side menu -->
+    <string name="side_home">Home</string>
+    <string name="side_settings">Settings</string>
+    <string name="side_help">Help</string>
+    <string name="side_log_out">Log Out</string>
+    <string name="side_exit">Close App</string>
+
+
+    <string name="navigation_drawer_open">open navigation drawer</string>
+    <string name="navigation_drawer_close">close navigation drawer</string>
+
+    <!--strings related to help page -->
+    <string name="help_label">For any help email us at:</string>
+    <string name="email">THHR@hlp.com</string>
+
+    <!-- strings related to settings -->
+    <string name="settings_language">Language</string>
+    <string name="settings_pInfo">Personal Information</string>
+
+    <!-- strings related to settings language -->
+    <string name="lang_english">English</string>
+    <string name="lang_french">French</string>
+    <string name="lang_saveSettings">Save Settings</string>
+
+    <!-- strings related to settings Personal Information -->
+    <string name="pinfo_pinfo">Personal Information</string>
+    <string name="pinfo_username">Username</string>
+    <string name="pinfo_password">Old Password</string>
+    <string name="pinfo_newPassword">New Password</string>
+    <string name="pinfo_saveChanges">Save changes</string>
+
+
+</resources>
