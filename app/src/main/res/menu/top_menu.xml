@@ -4,4 +4,7 @@
         android:id="@+id/exit"
         android:icon="@drawable/ic_exit"
         android:title="@string/side_exit" />
+    <item
+        android:id="@+id/language_sett"
+        android:title="@string/settings_language" />
 </menu>

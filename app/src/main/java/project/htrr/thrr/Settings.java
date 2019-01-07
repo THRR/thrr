@@ -13,14 +13,6 @@ public class Settings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        TextView language=(TextView)findViewById(R.id.language);
-        language.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent goToLang=new Intent(getApplicationContext(),settings_language.class);
-                startActivity(goToLang);
-            }
-        });
 
         TextView pInfo=(TextView)findViewById(R.id.pInfo);
         pInfo.setOnClickListener(new View.OnClickListener() {
@@ -31,4 +23,7 @@ public class Settings extends AppCompatActivity {
             }
         });
     }
+
+
+
 }

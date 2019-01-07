@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">THRR</string>
+    <string name="title_home">Accueil</string>
+    <string name="title_dashboard">Tableau de bord</string>
+    <string name="title_notifications">Les notifications</string>
+    <string name="Splashimage">LogoImage</string>
+    <string name="title_activity_login_register">THHR</string>
+    <string name="log_reg_login">se connecter</string>
+    <string name="log_reg_register">s'inscrire</string>
+    <string name="title_activity_login">se connecter</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Mot de passe </string>
+    <string name="action_sign_in">se connecter</string>
+    <string name="action_remember">Souviens-toi de moi</string>
+    <string name="action_sign_in_short">se connecter</string>
+    <string name="error_invalid_email">Cette adresse email est invalide</string>
+    <string name="error_invalid_password">Ce mot de passe est trop court</string>
+    <string name="error_invalid_password_alphaNumeric">Ce mot de passe doit contenir des lettres et des chiffres</string>
+    <string name="error_incorrect_password">Ce mot de passe est incorrect</string>
+    <string name="error_field_required">Ce champ est requis</string>
+
+    <!-- Strings related to registration -->
+    <string name="rgst_firstName">Prénom</string>
+    <string name="rgst_lastName">Nom de famille</string>
+    <string name="rgst_email">Email</string>
+    <string name="rgst_pswrd">Mot de passe</string>
+    <string name="rgst_rePswd">Retaper le mot de passe</string>
+    <string name="rgst_signUp">S'inscrire</string>
+    <string name="title_activity_home_page">Page d'accueil</string>
+
+    <!-- Stringss related to bottom menu -->
+    <string name="bottom_home">Accueil</string>
+    <string name="bottom_heart">Rythme cardiaque</string>
+    <string name="bottom_temperature">Température</string>
+
+    <!-- Stringss related to side menu -->
+    <string name="side_home">Accueil</string>
+    <string name="side_settings">Réglages</string>
+    <string name="side_help">Aidez-moi</string>
+    <string name="side_log_out">Connectez - Out</string>
+    <string name="side_exit">Fermer l'application</string>
+
+
+    <string name="navigation_drawer_open">open navigation drawer</string>
+    <string name="navigation_drawer_close">close navigation drawer</string>
+
+    <!--strings related to help page -->
+    <string name="help_label">Pour toute aide, écrivez-nous à:</string>
+    <string name="email">THHR@hlp.com</string>
+
+    <!-- strings related to settings -->
+    <string name="settings_language">La langue</string>
+    <string name="settings_pInfo">Informations personnelles</string>
+
+    <!-- strings related to settings language -->
+    <string name="lang_english">English</string>
+    <string name="lang_french">French</string>
+    <string name="lang_saveSettings">Enregistrer les paramètres</string>
+
+    <!-- strings related to settings Personal Information -->
+    <string name="pinfo_pinfo">Informations personnelles</string>
+    <string name="pinfo_username">Nom d'utilisateur</string>
+    <string name="pinfo_password">ancien mot de passe</string>
+    <string name="pinfo_newPassword">nouveau mot de passe</string>
+    <string name="pinfo_saveChanges">Sauvegarder les modifications</string>
+</resources>

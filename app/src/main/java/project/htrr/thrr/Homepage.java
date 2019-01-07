@@ -11,16 +11,38 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Homepage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private DrawerLayout drawer;
+   // private    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
+        // code for DB data retrive
+
+
+
+
+
+
+
         /* for the side menu */
         Toolbar toolbar =findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); //set the toolbar as the action bar
@@ -36,7 +58,7 @@ public class Homepage extends AppCompatActivity implements NavigationView.OnNavi
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
 
-        /*fragment handling for the side menu */
+        /*intent - activity handling for the side menu */
         NavigationView sideNav=findViewById(R.id.navigation_view);
         sideNav.setNavigationItemSelectedListener(this);
         //so the function below returns the fragment we want to display but there is no predefined one,

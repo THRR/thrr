@@ -3,8 +3,13 @@ package project.htrr.thrr;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 
 import android.app.Activity;
@@ -28,8 +33,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +54,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity {
 
+
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -49,59 +62,137 @@ public class LoginActivity extends AppCompatActivity {
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
+
 
     // UI references.
+    public static boolean CanISaveDataOffline=false; //I am a flag for homepage activity
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private CheckBox rememberMe;
+    FirebaseAuth firebaseAuth;
+    ProgressDialog progressDialog;
 
+
+
+    protected void onResume() {
+        super.onResume();
+        if(CanISaveDataOffline==true) {
+            CanISaveDataOffline=false;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        CanISaveDataOffline=false;
+
+
+        progressDialog = new ProgressDialog(this);
+
         // Set up the login form.
+        rememberMe = (CheckBox) findViewById(R.id.rememberMe);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        //so this is how we will proceed, if the use is not online we will check if we have any shared preference saved
+        //if we do that means it is 100% sure that accounts exists and we can load it
+        LoadLogin();
+
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+                if (!attemptLogin()) {
+                    progressDialog.show();
+                    if (!isNetworkAvailable()) {
+                        if (logInState()) {
+                            progressDialog.hide();
+                            Toast.makeText(LoginActivity.this, "Proceesing in offline mode", Toast.LENGTH_LONG).show();
+                            Intent toHomePage = new Intent(getApplicationContext(), Homepage.class);
+                            startActivity(toHomePage);
+                        } else {
+                            progressDialog.hide();
+                            Toast.makeText(LoginActivity.this, "Impossible proceeding in offline mode, please try again later", Toast.LENGTH_LONG).show();
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+                        }
+                    } else {
+                        //check if we can login or not to DB using firebase instance
+                        firebaseAuth.signInWithEmailAndPassword(mEmailView.getText().toString(), mPasswordView.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            progressDialog.hide();
+                                            //so as we know the login has been successfull we can save the login credential and use them to log in again
+                                            if (rememberMe.isChecked()) {
+                                                RememberMe();
+                                            } else {
+                                                ResetLogin();
+                                            }
+                                            CanISaveDataOffline=true;
+                                            Intent toHomePage = new Intent(getApplicationContext(), Homepage.class);
+                                            startActivity(toHomePage);
+                                        } else {
+                                            progressDialog.hide();
+                                            Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
 
-        Button TakeMeToHomePage=(Button) findViewById(R.id.email_sign_in_button);
-        TakeMeToHomePage.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent toHomePage=new Intent(getApplicationContext(),Homepage.class);
-                startActivity(toHomePage);
-                finish();
-
+                        //    finish();
+                    }
+                }
             }
         });
 
     }
+
+    public void LoadLogin() {
+        SharedPreferences savedInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        String email = savedInfo.getString("email", "missing");
+        String psw = savedInfo.getString("password", "missing");
+        if (!(email.equals("missing")) && !(psw.equals("missing"))) {
+            mEmailView.setText(email);
+            mPasswordView.setText(psw);
+            rememberMe.setChecked(true);
+        }
+    }
+
+    //if we have email and password saved in shared preference we can login
+    public boolean logInState() {
+        SharedPreferences savedInfo = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        String email = savedInfo.getString("email", "missing");
+        String psw = savedInfo.getString("password", "missing");
+        if ((email.equals("missing")) || (psw.equals("missing"))) {
+            return false;
+        } else if(mEmailView.getText().toString().equals(email) && mPasswordView.getText().toString().equals(psw) ){
+            return true;
+        }else return true;
+    }
+
+
+    public void RememberMe() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", mEmailView.getText().toString());
+        editor.putString("password", mPasswordView.getText().toString());
+        editor.apply();
+
+    }
+
+    public void ResetLogin() {
+        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", "missing");
+        editor.putString("password", "missing");
+        editor.apply();
+    }
+
     /**
      * Callback received when a permissions request has been completed.
      */
@@ -112,11 +203,7 @@ public class LoginActivity extends AppCompatActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
+    private boolean attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -129,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -154,13 +241,10 @@ public class LoginActivity extends AppCompatActivity {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
         }
+        //here will go the code for the intent and sign in as here is where we login ----------->
+
+        return cancel;
     }
 
     private boolean isEmailValid(String email) {
@@ -170,7 +254,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 7; //for now set it to 7 as we set the requirment as 8
+        if (password.length() > 7) return false;
+        else return true;//for now set it to 7 as we set the requirment as 8
     }
 
   /* //develop to check the number but need to fix it
@@ -182,38 +267,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
@@ -252,24 +306,14 @@ public class LoginActivity extends AppCompatActivity {
             return true;
         }
 
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
 
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
+    }
 
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 
